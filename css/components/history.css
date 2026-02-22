@@ -1,0 +1,150 @@
+/* ══════════════════════════════════════════════════
+   History Panel — Recent QR codes sidebar
+   ══════════════════════════════════════════════════ */
+
+.history-section {
+    margin-top: var(--space-xl);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: var(--space-lg);
+}
+
+.history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+}
+
+.history-header__title {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.history-header__title svg {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+}
+
+.history-header__badge {
+    font-size: var(--font-size-xs);
+    background: rgba(var(--accent-rgb), 0.15);
+    color: var(--accent-hover);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* ── History List ───────────────────────────────── */
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    max-height: 200px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.history-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.history-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-full);
+}
+
+/* ── History Item ───────────────────────────────── */
+.history-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    transition: background var(--transition-fast),
+        border-color var(--transition-fast);
+    animation: slideIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.history-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.history-item__url {
+    flex: 1;
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+}
+
+.history-item__time {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.history-item__delete {
+    padding: 4px;
+    border-radius: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: color var(--transition-fast), background var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.history-item__delete:hover {
+    color: var(--error);
+    background: var(--error-bg);
+}
+
+.history-item__delete svg {
+    width: 12px;
+    height: 12px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+}
+
+/* ── Empty state ────────────────────────────────── */
+.history-empty {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    padding: var(--space-lg);
+    text-align: center;
+}

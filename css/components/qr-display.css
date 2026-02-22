@@ -1,0 +1,70 @@
+/* ══════════════════════════════════════════════════
+   QR Code Display Section
+   ══════════════════════════════════════════════════ */
+
+.qr-section {
+    margin-bottom: var(--space-xl);
+    transition: opacity var(--transition-smooth),
+        max-height var(--transition-smooth);
+}
+
+.qr-section.is-hidden {
+    display: none;
+}
+
+/* ── QR Wrapper (white background for scan) ──── */
+.qr-wrapper {
+    display: inline-flex;
+    padding: 18px;
+    border-radius: var(--radius-lg);
+    background: #fff;
+    box-shadow: var(--shadow-qr);
+    margin-bottom: var(--space-md);
+    position: relative;
+}
+
+.qr-wrapper.is-animating {
+    animation: qrPop 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes qrPop {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+#qrcode img,
+#qrcode canvas {
+    display: block;
+}
+
+/* ── QR Label (URL display) ─────────────────────── */
+.qr-label {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    word-break: break-all;
+    max-width: 340px;
+    margin: 0 auto;
+    line-height: 1.4;
+}
+
+/* ── Placeholder when no QR ─────────────────────── */
+.qr-placeholder {
+    padding: var(--space-3xl) var(--space-xl);
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: 1.6;
+}
+
+.qr-placeholder__icon {
+    font-size: 2.4rem;
+    margin-bottom: var(--space-md);
+    display: block;
+    opacity: 0.5;
+}

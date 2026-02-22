@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Code Generator — Create, Customize & Download</title>
+    <meta name="description"
+        content="Generate, customize, and download QR codes for any URL instantly. Choose colors, sizes, and error correction levels." />
+    <meta name="theme-color" content="#07071a" />
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>" />
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+
+    <!-- Stylesheets (modular) -->
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components/card.css" />
+    <link rel="stylesheet" href="css/components/forms.css" />
+    <link rel="stylesheet" href="css/components/buttons.css" />
+    <link rel="stylesheet" href="css/components/qr-display.css" />
+    <link rel="stylesheet" href="css/components/toast.css" />
+    <link rel="stylesheet" href="css/components/history.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+
+    <!-- QRCode.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+</head>
+
+<body>
+    <!-- ═══ Background Blobs ═══ -->
+    <div class="blob blob--purple" aria-hidden="true"></div>
+    <div class="blob blob--pink" aria-hidden="true"></div>
+    <div class="blob blob--cyan" aria-hidden="true"></div>
+
+    <!-- ═══ Main Application ═══ -->
+    <main class="app-container" role="main">
+        <div class="card">
+
+            <!-- Header -->
+            <h1 class="card__title">QR Code Generator</h1>
+            <p class="card__subtitle">Enter any URL to generate a customizable, scannable QR code</p>
+
+            <!-- URL Input -->
+            <div class="input-group">
+                <label for="urlInput" class="sr-only">URL to encode</label>
+                <input type="url" class="input" id="urlInput" placeholder="https://example.com"
+                    value="https://forms.gle/kY7uVUeffLyrGkg27" autocomplete="url" spellcheck="false"
+                    aria-describedby="urlHelp" />
+                <button class="btn btn--generate" id="generateBtn" title="Generate QR Code"
+                    aria-label="Generate QR code">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M5 12h14" />
+                        <path d="M12 5l7 7-7 7" />
+                    </svg>
+                    Generate
+                </button>
+            </div>
+
+            <!-- Options Toggle -->
+            <button class="options-panel__toggle" id="optionsToggle" aria-expanded="false" aria-controls="optionsPanel">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9" />
+                </svg>
+                Customize Options
+            </button>
+
+            <!-- Options Panel (hidden by default) -->
+            <div class="options-panel" id="optionsPanel" style="display: none;" role="region"
+                aria-label="QR Code options">
+                <!-- Size -->
+                <div class="form-field">
+                    <label class="form-field__label" for="sizeSelect">Size</label>
+                    <select class="select" id="sizeSelect">
+                        <option value="150">Small (150px)</option>
+                        <option value="220" selected>Medium (220px)</option>
+                        <option value="300">Large (300px)</option>
+                        <option value="400">X-Large (400px)</option>
+                    </select>
+                </div>
+
+                <!-- Error Correction -->
+                <div class="form-field">
+                    <label class="form-field__label" for="errorLevelSelect">Error Correction</label>
+                    <select class="select" id="errorLevelSelect">
+                        <option value="L">Low (7%)</option>
+                        <option value="M">Medium (15%)</option>
+                        <option value="Q">Quartile (25%)</option>
+                        <option value="H" selected>High (30%)</option>
+                    </select>
+                </div>
+
+                <!-- Foreground Color -->
+                <div class="form-field">
+                    <label class="form-field__label" for="colorDark">Foreground</label>
+                    <div class="color-field">
+                        <input type="color" class="color-picker" id="colorDark" value="#0a0a1a" />
+                        <span class="color-value" id="colorDarkValue">#0a0a1a</span>
+                    </div>
+                </div>
+
+                <!-- Background Color -->
+                <div class="form-field">
+                    <label class="form-field__label" for="colorLight">Background</label>
+                    <div class="color-field">
+                        <input type="color" class="color-picker" id="colorLight" value="#ffffff" />
+                        <span class="color-value" id="colorLightValue">#ffffff</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QR Code Display -->
+            <div class="qr-section is-hidden" id="qrSection">
+                <div class="qr-wrapper is-animating">
+                    <div id="qrcode" aria-label="Generated QR code"></div>
+                </div>
+                <p class="qr-label" id="qrLabel" aria-live="polite"></p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="actions">
+                <button class="btn btn--primary" id="downloadPngBtn" aria-label="Download QR as PNG">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    PNG
+                </button>
+                <button class="btn btn--secondary" id="downloadSvgBtn" aria-label="Download QR as SVG">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    SVG
+                </button>
+                <button class="btn btn--secondary" id="copyImgBtn" aria-label="Copy QR image to clipboard">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
+                    Copy
+                </button>
+                <button class="btn btn--secondary" id="shareBtn" aria-label="Share QR link">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="18" cy="5" r="3" />
+                        <circle cx="6" cy="12" r="3" />
+                        <circle cx="18" cy="19" r="3" />
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                    </svg>
+                    Share
+                </button>
+            </div>
+
+            <!-- History Section -->
+            <section class="history-section" id="historySection" style="display: none;" aria-label="QR code history">
+                <div class="history-header">
+                    <h2 class="history-header__title">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 16 14" />
+                        </svg>
+                        Recent
+                        <span class="history-header__badge" id="historyBadge">0</span>
+                    </h2>
+                    <button class="btn btn--ghost" id="clearHistoryBtn" aria-label="Clear history">Clear all</button>
+                </div>
+                <div class="history-list" id="historyList" role="list"></div>
+            </section>
+
+            <!-- Footer -->
+            <p class="card__footer">QR Code Generator</p>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <!-- Application Script (ES Modules) -->
+    <script type="module" src="js/app.js"></script>
+</body>
+
+</html>

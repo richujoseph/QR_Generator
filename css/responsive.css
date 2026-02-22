@@ -1,0 +1,85 @@
+/* ══════════════════════════════════════════════════
+   Responsive Breakpoints
+   ══════════════════════════════════════════════════ */
+
+/* ── Small screens (phones) ─────────────────────── */
+@media (max-width: 480px) {
+    body {
+        padding: var(--space-md);
+        align-items: flex-start;
+        padding-top: var(--space-2xl);
+    }
+
+    .card {
+        padding: var(--space-2xl) var(--space-xl) var(--space-xl);
+    }
+
+    .card__title {
+        font-size: 1.35rem;
+    }
+
+    .input-group {
+        flex-direction: column;
+    }
+
+    .btn--generate {
+        width: 100%;
+    }
+
+    .options-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .blob {
+        opacity: 0.25;
+    }
+
+    .blob--purple {
+        width: 300px;
+        height: 300px;
+    }
+
+    .blob--pink {
+        width: 260px;
+        height: 260px;
+    }
+
+    .blob--cyan {
+        width: 200px;
+        height: 200px;
+    }
+}
+
+/* ── Medium screens ─────────────────────────────── */
+@media (min-width: 481px) and (max-width: 768px) {
+    .card {
+        padding: var(--space-3xl) var(--space-2xl) var(--space-2xl);
+    }
+}
+
+/* ── Large screens ──────────────────────────────── */
+@media (min-width: 1200px) {
+    .app-container {
+        max-width: 520px;
+    }
+}
+
+/* ── Reduced motion ─────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .blob {
+        animation: none;
+    }
+}

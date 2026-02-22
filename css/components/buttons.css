@@ -1,0 +1,162 @@
+/* ══════════════════════════════════════════════════
+   Buttons
+   ══════════════════════════════════════════════════ */
+
+/* ── Base Button ────────────────────────────────── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    padding: 13px var(--space-lg);
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: transform var(--transition-fast),
+        box-shadow var(--transition-base),
+        background var(--transition-base),
+        opacity var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:active {
+    transform: scale(0.97);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+}
+
+/* ── Ripple Effect ──────────────────────────────── */
+.btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, transparent 70%);
+    opacity: 0;
+    transform: scale(0);
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    pointer-events: none;
+}
+
+.btn:active::after {
+    opacity: 1;
+    transform: scale(2.5);
+    transition: none;
+}
+
+/* ── Primary (gradient) ─────────────────────────── */
+.btn--primary {
+    background: var(--accent-gradient);
+    color: #fff;
+    box-shadow: var(--shadow-button);
+}
+
+.btn--primary:hover:not(:disabled) {
+    box-shadow: var(--shadow-button-hover);
+}
+
+/* ── Secondary (glass) ──────────────────────────── */
+.btn--secondary {
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.btn--secondary:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* ── Ghost ──────────────────────────────────────── */
+.btn--ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    padding: var(--space-sm) var(--space-md);
+}
+
+.btn--ghost:hover:not(:disabled) {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* ── Generate Button (inline with input) ──────── */
+.btn--generate {
+    flex-shrink: 0;
+    padding: var(--space-md) 20px;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    background: var(--accent-gradient);
+    color: #fff;
+    box-shadow: var(--shadow-button);
+}
+
+.btn--generate:hover:not(:disabled) {
+    box-shadow: var(--shadow-button-hover);
+}
+
+.btn--generate svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2.5;
+}
+
+/* ── Icon-only Button ───────────────────────────── */
+.btn--icon {
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn--icon:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.btn--icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* ── Action Button Group ────────────────────────── */
+.actions {
+    display: flex;
+    gap: var(--space-md);
+}
+
+.actions .btn {
+    flex: 1;
+}
+
+/* ── Loading Spinner inside button ──────────────── */
+.btn .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

@@ -1,0 +1,54 @@
+/* ══════════════════════════════════════════════════
+   Card Component
+   ══════════════════════════════════════════════════ */
+
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    backdrop-filter: blur(28px) saturate(1.4);
+    -webkit-backdrop-filter: blur(28px) saturate(1.4);
+    border-radius: var(--radius-xl);
+    padding: var(--space-4xl) var(--space-3xl) var(--space-3xl);
+    text-align: center;
+    box-shadow: var(--shadow-card);
+    animation: cardIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes cardIn {
+    from {
+        opacity: 0;
+        transform: translateY(32px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ── Card Header ─────────────────────────────────── */
+.card__title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-extrabold);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-xs);
+    background: linear-gradient(135deg, #fff 30%, var(--accent-hover));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.card__subtitle {
+    font-size: var(--font-size-base);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-xl);
+    line-height: 1.5;
+}
+
+/* ── Card Footer ─────────────────────────────────── */
+.card__footer {
+    margin-top: var(--space-xl);
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+}

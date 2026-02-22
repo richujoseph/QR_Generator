@@ -1,0 +1,52 @@
+/* ══════════════════════════════════════════════════
+   Toast Notification
+   ══════════════════════════════════════════════════ */
+
+.toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-sm);
+    padding: 10px 22px;
+    border-radius: var(--radius-md);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-smooth),
+        transform var(--transition-smooth);
+    z-index: var(--z-toast);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    max-width: 90%;
+    backdrop-filter: blur(12px);
+}
+
+.toast.is-visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+/* ── Toast Variants ─────────────────────────────── */
+.toast--success {
+    background: var(--success);
+    color: #0a0a1a;
+}
+
+.toast--error {
+    background: var(--error);
+    color: #fff;
+}
+
+.toast--info {
+    background: var(--info);
+    color: #0a0a1a;
+}
+
+.toast svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
