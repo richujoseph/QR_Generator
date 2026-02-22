@@ -5,10 +5,10 @@
  */
 
 export const LANGUAGES = [
-    { code: 'en', label: 'English', flag: '' },
-    { code: 'es', label: 'Español', flag: '' },
-    { code: 'fr', label: 'Français', flag: '' },
-    { code: 'hi', label: 'हिन्दी', flag: '' },
+    { code: 'en', label: 'English', flag: '🇺🇸' },
+    { code: 'es', label: 'Español', flag: '🇪🇸' },
+    { code: 'fr', label: 'Français', flag: '🇫🇷' },
+    { code: 'hi', label: 'हिन्दी', flag: '🇮🇳' },
     { code: 'de', label: 'Deutsch', flag: '' },
     { code: 'zh', label: '中文', flag: '' },
 ];
@@ -30,7 +30,7 @@ const TRANSLATIONS = {
         share: 'Share',
         recent: 'Recent',
         clearAll: 'Clear all',
-        footer: 'Free & Private — QR Code Generator',
+        footer: 'Free & Private QR Code Generator',
         generateFirst: 'Generate a QR code first',
         pngDownloaded: 'PNG downloaded!',
         svgDownloaded: 'SVG downloaded!',
