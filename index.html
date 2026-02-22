@@ -6,10 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>QR Code Generator — Create, Customize & Download</title>
     <meta name="description"
-        content="Generate, customize, and download QR codes for any URL instantly. Choose colors, sizes, and error correction levels." />
+        content="Generate, customize, and download QR codes for URLs, WiFi, Email, Phone, SMS, and plain text. Free, private, no tracking." />
     <meta name="theme-color" content="#07071a" />
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="QR Code Generator — Create, Customize & Download" />
+    <meta property="og:description"
+        content="Free QR code generator for URLs, WiFi, Email, Phone & more. No ads, no tracking." />
+    <meta property="og:type" content="website" />
 
     <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -27,10 +33,14 @@
     <link rel="stylesheet" href="css/components/qr-display.css" />
     <link rel="stylesheet" href="css/components/toast.css" />
     <link rel="stylesheet" href="css/components/history.css" />
+    <link rel="stylesheet" href="css/components/features.css" />
+    <link rel="stylesheet" href="css/components/scanner.css" />
     <link rel="stylesheet" href="css/responsive.css" />
 
     <!-- QRCode.js library -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <!-- jsQR for camera scanning -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 </head>
 
 <body>
@@ -41,19 +51,56 @@
 
     <!-- ═══ Main Application ═══ -->
     <main class="app-container" role="main">
-        <div class="card">
+        <div class="card" id="mainCard">
 
-            <!-- Header -->
-            <h1 class="card__title">QR Code Generator</h1>
-            <p class="card__subtitle">Enter any URL to generate a customizable, scannable QR code</p>
+            <!-- Drag & Drop Overlay -->
+            <div class="drag-overlay" aria-hidden="true">
+                <span class="drag-overlay__icon">📎</span>
+                <span class="drag-overlay__text">Drop URL here to generate QR</span>
+            </div>
 
-            <!-- URL Input -->
-            <div class="input-group">
-                <label for="urlInput" class="sr-only">URL to encode</label>
+            <!-- Header with Scan Button -->
+            <div class="header-row">
+                <h1 class="card__title">QR Code Generator</h1>
+                <button class="scan-btn" id="scanBtn" title="Scan a QR code with camera">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M1 1h5M18 1h5M1 18v5M23 18v5" />
+                        <rect x="5" y="5" width="14" height="14" rx="1" />
+                    </svg>
+                    Scan
+                </button>
+            </div>
+            <p class="card__subtitle">Generate QR codes for URLs, WiFi, emails, and more — free & private</p>
+
+            <!-- ═══ Data Type Tabs ═══ -->
+            <div class="type-tabs" role="tablist" aria-label="QR code data type">
+                <button class="type-tab is-active" data-type="url" role="tab" aria-selected="true" title="URL">
+                    <span class="type-tab__icon">🔗</span> URL
+                </button>
+                <button class="type-tab" data-type="text" role="tab" aria-selected="false" title="Plain Text">
+                    <span class="type-tab__icon">📝</span> Text
+                </button>
+                <button class="type-tab" data-type="wifi" role="tab" aria-selected="false" title="WiFi">
+                    <span class="type-tab__icon">📶</span> WiFi
+                </button>
+                <button class="type-tab" data-type="email" role="tab" aria-selected="false" title="Email">
+                    <span class="type-tab__icon">✉️</span> Email
+                </button>
+                <button class="type-tab" data-type="phone" role="tab" aria-selected="false" title="Phone">
+                    <span class="type-tab__icon">📞</span> Phone
+                </button>
+                <button class="type-tab" data-type="sms" role="tab" aria-selected="false" title="SMS">
+                    <span class="type-tab__icon">💬</span> SMS
+                </button>
+            </div>
+
+            <!-- ═══ URL / Text / Phone Input (default) ═══ -->
+            <div class="input-group" style="position:relative">
+                <span class="smart-paste-hint" id="smartPasteHint">✨ Auto-detected!</span>
+                <label for="urlInput" class="sr-only">Data to encode</label>
                 <input type="url" class="input" id="urlInput" placeholder="https://example.com"
-                    value="https://forms.gle/kY7uVUeffLyrGkg27" autocomplete="url" spellcheck="false"
-                    aria-describedby="urlHelp" />
-                <button class="btn btn--generate" id="generateBtn" title="Generate QR Code"
+                    value="https://forms.gle/kY7uVUeffLyrGkg27" autocomplete="url" spellcheck="false" />
+                <button class="btn btn--generate" id="generateBtn" title="Generate QR Code (G)"
                     aria-label="Generate QR code">
                     <svg viewBox="0 0 24 24">
                         <path d="M5 12h14" />
@@ -61,6 +108,65 @@
                     </svg>
                     Generate
                 </button>
+            </div>
+
+            <!-- ═══ WiFi Fields ═══ -->
+            <div class="wifi-fields" id="wifiFields">
+                <input type="text" class="input" id="wifiSsid" placeholder="Network name (SSID)" />
+                <div class="wifi-row">
+                    <div class="form-field" style="flex:2">
+                        <input type="password" class="input" id="wifiPass" placeholder="Password" />
+                    </div>
+                    <div class="form-field" style="flex:1">
+                        <select class="select" id="wifiEnc" style="width:100%; height:100%">
+                            <option value="WPA">WPA/WPA2</option>
+                            <option value="WEP">WEP</option>
+                            <option value="nopass">None</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn--generate" id="wifiGenerateBtn" style="width:100%">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M5 12h14" />
+                        <path d="M12 5l7 7-7 7" />
+                    </svg>
+                    Generate WiFi QR
+                </button>
+            </div>
+
+            <!-- ═══ Email Fields ═══ -->
+            <div class="email-fields" id="emailFields">
+                <input type="email" class="input" id="emailAddress" placeholder="Email address" />
+                <input type="text" class="input" id="emailSubject" placeholder="Subject (optional)" />
+                <input type="text" class="input" id="emailBody" placeholder="Body (optional)" />
+                <button class="btn btn--generate" id="emailGenerateBtn" style="width:100%">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M5 12h14" />
+                        <path d="M12 5l7 7-7 7" />
+                    </svg>
+                    Generate Email QR
+                </button>
+            </div>
+
+            <!-- ═══ SMS Fields ═══ -->
+            <div class="sms-fields" id="smsFields">
+                <input type="tel" class="input" id="smsPhone" placeholder="Phone number" />
+                <input type="text" class="input" id="smsMessage" placeholder="Message (optional)" />
+                <button class="btn btn--generate" id="smsGenerateBtn" style="width:100%">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M5 12h14" />
+                        <path d="M12 5l7 7-7 7" />
+                    </svg>
+                    Generate SMS QR
+                </button>
+            </div>
+
+            <!-- ═══ Character Counter ═══ -->
+            <div class="char-counter">
+                <span class="char-counter__text" id="charCountText">0 / 4296</span>
+                <div class="char-counter__bar">
+                    <div class="char-counter__fill" id="charFill" style="width: 0%"></div>
+                </div>
             </div>
 
             <!-- Options Toggle -->
@@ -74,7 +180,6 @@
             <!-- Options Panel (hidden by default) -->
             <div class="options-panel" id="optionsPanel" style="display: none;" role="region"
                 aria-label="QR Code options">
-                <!-- Size -->
                 <div class="form-field">
                     <label class="form-field__label" for="sizeSelect">Size</label>
                     <select class="select" id="sizeSelect">
@@ -84,8 +189,6 @@
                         <option value="400">X-Large (400px)</option>
                     </select>
                 </div>
-
-                <!-- Error Correction -->
                 <div class="form-field">
                     <label class="form-field__label" for="errorLevelSelect">Error Correction</label>
                     <select class="select" id="errorLevelSelect">
@@ -95,8 +198,6 @@
                         <option value="H" selected>High (30%)</option>
                     </select>
                 </div>
-
-                <!-- Foreground Color -->
                 <div class="form-field">
                     <label class="form-field__label" for="colorDark">Foreground</label>
                     <div class="color-field">
@@ -104,8 +205,6 @@
                         <span class="color-value" id="colorDarkValue">#0a0a1a</span>
                     </div>
                 </div>
-
-                <!-- Background Color -->
                 <div class="form-field">
                     <label class="form-field__label" for="colorLight">Background</label>
                     <div class="color-field">
@@ -113,19 +212,44 @@
                         <span class="color-value" id="colorLightValue">#ffffff</span>
                     </div>
                 </div>
+
+                <!-- ═══ Color Presets ═══ -->
+                <div class="color-presets">
+                    <span class="color-presets__label">Quick Presets</span>
+                    <div class="color-presets__list" id="colorPresets">
+                        <button class="color-preset is-active" data-preset="classic" data-fg="#0a0a1a" data-bg="#ffffff"
+                            title="Classic"></button>
+                        <button class="color-preset" data-preset="ocean" data-fg="#0c4a6e" data-bg="#e0f2fe"
+                            title="Ocean"></button>
+                        <button class="color-preset" data-preset="sunset" data-fg="#9a3412" data-bg="#fff7ed"
+                            title="Sunset"></button>
+                        <button class="color-preset" data-preset="forest" data-fg="#14532d" data-bg="#f0fdf4"
+                            title="Forest"></button>
+                        <button class="color-preset" data-preset="neon" data-fg="#6d28d9" data-bg="#faf5ff"
+                            title="Neon Purple"></button>
+                        <button class="color-preset" data-preset="cherry" data-fg="#9f1239" data-bg="#fff1f2"
+                            title="Cherry"></button>
+                        <button class="color-preset" data-preset="midnight" data-fg="#1e1b4b" data-bg="#eef2ff"
+                            title="Midnight"></button>
+                        <button class="color-preset" data-preset="gold" data-fg="#713f12" data-bg="#fefce8"
+                            title="Gold"></button>
+                    </div>
+                </div>
             </div>
 
-            <!-- QR Code Display -->
+            <!-- ═══ QR Code Display ═══ -->
             <div class="qr-section is-hidden" id="qrSection">
-                <div class="qr-wrapper is-animating">
+                <div class="qr-wrapper is-animating" title="Click to view fullscreen">
                     <div id="qrcode" aria-label="Generated QR code"></div>
                 </div>
                 <p class="qr-label" id="qrLabel" aria-live="polite"></p>
+                <div id="qualityBadge"></div>
             </div>
 
-            <!-- Action Buttons -->
+            <!-- ═══ Action Buttons ═══ -->
             <div class="actions">
-                <button class="btn btn--primary" id="downloadPngBtn" aria-label="Download QR as PNG">
+                <button class="btn btn--primary" id="downloadPngBtn" aria-label="Download QR as PNG"
+                    title="Download PNG (⌘D)">
                     <svg viewBox="0 0 24 24">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                         <polyline points="7 10 12 15 17 10" />
@@ -133,7 +257,8 @@
                     </svg>
                     PNG
                 </button>
-                <button class="btn btn--secondary" id="downloadSvgBtn" aria-label="Download QR as SVG">
+                <button class="btn btn--secondary" id="downloadSvgBtn" aria-label="Download QR as SVG"
+                    title="Download SVG (⌘S)">
                     <svg viewBox="0 0 24 24">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                         <polyline points="7 10 12 15 17 10" />
@@ -160,7 +285,16 @@
                 </button>
             </div>
 
-            <!-- History Section -->
+            <!-- ═══ Stats Bar ═══ -->
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat__icon">⚡</span>
+                    <span class="stat__value" id="statTotal">0</span>
+                    <span>generated</span>
+                </div>
+            </div>
+
+            <!-- ═══ History Section ═══ -->
             <section class="history-section" id="historySection" style="display: none;" aria-label="QR code history">
                 <div class="history-header">
                     <h2 class="history-header__title">
@@ -177,15 +311,73 @@
             </section>
 
             <!-- Footer -->
-            <p class="card__footer">QR Code Generator</p>
+            <p class="card__footer">Free & Private — QR Code Generator</p>
         </div>
     </main>
 
-    <!-- Toast Notification -->
+    <!-- ═══ Fullscreen QR Overlay ═══ -->
+    <div class="fullscreen-overlay" id="fullscreenOverlay" role="dialog" aria-label="Fullscreen QR code">
+        <div class="fullscreen-overlay__qr">
+            <img id="fullscreenImg" alt="QR Code fullscreen" />
+        </div>
+        <p class="fullscreen-overlay__url" id="fullscreenUrl"></p>
+        <p class="fullscreen-overlay__hint">Click anywhere or press Esc to close</p>
+    </div>
+
+    <!-- ═══ Camera Scanner Overlay ═══ -->
+    <div class="scanner-overlay" id="scannerOverlay" role="dialog" aria-label="QR code scanner">
+        <p class="scanner-title">📷 Scan QR Code</p>
+        <div class="scanner-viewport">
+            <video id="scannerVideo" muted></video>
+            <canvas id="scannerCanvas"></canvas>
+            <div class="scanner-corners"></div>
+            <div class="scanner-corners-bottom"></div>
+        </div>
+        <p class="scanner-hint">Point your camera at a QR code</p>
+        <button class="scanner-close" id="scannerClose">Cancel</button>
+    </div>
+
+    <!-- ═══ Toast Notification ═══ -->
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <!-- ═══ Keyboard Shortcuts Hint ═══ -->
+    <div class="kbd-hint" aria-label="Keyboard shortcuts">
+        <button class="kbd-trigger" title="Keyboard shortcuts" aria-label="Show keyboard shortcuts">⌨</button>
+        <div class="kbd-tooltip" role="tooltip">
+            <p class="kbd-tooltip__title">Shortcuts</p>
+            <div class="kbd-tooltip__row">
+                <span class="kbd-tooltip__label">Focus input</span>
+                <span class="kbd-tooltip__keys"><kbd>G</kbd></span>
+            </div>
+            <div class="kbd-tooltip__row">
+                <span class="kbd-tooltip__label">Download PNG</span>
+                <span class="kbd-tooltip__keys"><kbd>⌘</kbd><kbd>D</kbd></span>
+            </div>
+            <div class="kbd-tooltip__row">
+                <span class="kbd-tooltip__label">Download SVG</span>
+                <span class="kbd-tooltip__keys"><kbd>⌘</kbd><kbd>S</kbd></span>
+            </div>
+            <div class="kbd-tooltip__row">
+                <span class="kbd-tooltip__label">Fullscreen QR</span>
+                <span class="kbd-tooltip__keys"><kbd>F</kbd></span>
+            </div>
+            <div class="kbd-tooltip__row">
+                <span class="kbd-tooltip__label">Close overlay</span>
+                <span class="kbd-tooltip__keys"><kbd>Esc</kbd></span>
+            </div>
+        </div>
+    </div>
 
     <!-- Application Script (ES Modules) -->
     <script type="module" src="js/app.js"></script>
+
+    <!-- Wire up the extra generate buttons (WiFi/Email/SMS) -->
+    <script type="module">
+        const generateBtn = document.getElementById('generateBtn');
+        document.getElementById('wifiGenerateBtn')?.addEventListener('click', () => generateBtn.click());
+        document.getElementById('emailGenerateBtn')?.addEventListener('click', () => generateBtn.click());
+        document.getElementById('smsGenerateBtn')?.addEventListener('click', () => generateBtn.click());
+    </script>
 </body>
 
 </html>

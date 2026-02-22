@@ -16,12 +16,24 @@ let qrInstance = null;
 /** Currently generated URL */
 let currentURL = '';
 
+/** Last used colors for SVG export */
+let lastColorDark = CONFIG.qr.defaultColorDark;
+let lastColorLight = CONFIG.qr.defaultColorLight;
+
 /**
  * Get the currently generated URL.
  * @returns {string}
  */
 export function getCurrentURL() {
     return currentURL;
+}
+
+/**
+ * Get the QR instance (for accessing internal model data).
+ * @returns {QRCode|null}
+ */
+export function getInstance() {
+    return qrInstance;
 }
 
 /**
@@ -57,6 +69,8 @@ export function generate(container, url, options = {}) {
     });
 
     currentURL = url;
+    lastColorDark = colorDark;
+    lastColorLight = colorLight;
 }
 
 /**
@@ -87,58 +101,42 @@ export function downloadPNG(container, filename = 'qr-code.png') {
 }
 
 /**
- * Download the current QR code as an SVG file.
- * @param {HTMLElement} container
+ * Download the current QR code as a proper SVG file.
+ * Uses the QRCode.js internal model (`_oQRCode`) to read the exact
+ * module grid — this is 100% accurate unlike pixel-scanning.
+ *
+ * @param {HTMLElement} _container - unused, kept for API compat
  * @param {string} [filename='qr-code.svg']
  * @returns {boolean}
  */
-export function downloadSVG(container, filename = 'qr-code.svg') {
-    const canvas = container.querySelector('canvas');
-    if (!canvas) return false;
+export function downloadSVG(_container, filename = 'qr-code.svg') {
+    if (!qrInstance) return false;
 
-    const size = canvas.width;
-    const ctx = canvas.getContext('2d');
-    const imageData = ctx.getImageData(0, 0, size, size);
-    const data = imageData.data;
+    // Access the internal QRCode model
+    const qrModel = qrInstance._oQRCode;
+    if (!qrModel) return false;
 
-    // Determine the module size by checking pixels
-    // Find the first dark pixel
-    let moduleSize = 1;
-    for (let x = 0; x < size; x++) {
-        const idx = x * 4;
-        if (data[idx] < 128) {  // dark pixel
-            // Count consecutive dark pixels
-            let count = 0;
-            for (let xx = x; xx < size; xx++) {
-                const idx2 = xx * 4;
-                if (data[idx2] < 128) count++;
-                else break;
-            }
-            moduleSize = count;
-            break;
-        }
-    }
+    const moduleCount = qrModel.getModuleCount();
+    if (!moduleCount || moduleCount <= 0) return false;
 
-    const modules = Math.round(size / moduleSize);
-    const padding = 4;
-    const svgSize = modules + padding * 2;
+    const quietZone = 4; // standard QR quiet zone in modules
+    const totalSize = moduleCount + quietZone * 2;
 
+    // Build SVG rects for each dark module
     let rects = '';
-    for (let row = 0; row < modules; row++) {
-        for (let col = 0; col < modules; col++) {
-            const px = Math.floor(col * moduleSize + moduleSize / 2);
-            const py = Math.floor(row * moduleSize + moduleSize / 2);
-            const idx = (py * size + px) * 4;
-            if (data[idx] < 128) { // dark module
-                rects += `<rect x="${col + padding}" y="${row + padding}" width="1" height="1"/>`;
+    for (let row = 0; row < moduleCount; row++) {
+        for (let col = 0; col < moduleCount; col++) {
+            if (qrModel.isDark(row, col)) {
+                rects += `<rect x="${col + quietZone}" y="${row + quietZone}" width="1" height="1"/>`;
             }
         }
     }
 
     const svgContent = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svgSize} ${svgSize}" width="${size}" height="${size}">
-  <rect width="${svgSize}" height="${svgSize}" fill="#ffffff"/>
-  <g fill="#0a0a1a">${rects}</g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalSize} ${totalSize}" 
+     width="${totalSize * 10}" height="${totalSize * 10}" shape-rendering="crispEdges">
+  <rect width="${totalSize}" height="${totalSize}" fill="${lastColorLight}"/>
+  <g fill="${lastColorDark}">${rects}</g>
 </svg>`;
 
     const blob = new Blob([svgContent], { type: 'image/svg+xml' });
@@ -147,7 +145,9 @@ export function downloadSVG(container, filename = 'qr-code.svg') {
     link.download = filename;
     link.href = url;
     link.click();
-    URL.revokeObjectURL(url);
+
+    // Clean up the object URL after a short delay
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
     return true;
 }
 
@@ -195,4 +195,15 @@ export async function shareUrl() {
     } catch {
         return 'failed';
     }
+}
+
+/**
+ * Get a data URL of the current QR code (for fullscreen preview).
+ * @param {HTMLElement} container
+ * @returns {string|null}
+ */
+export function getDataURL(container) {
+    const canvas = container.querySelector('canvas');
+    if (!canvas) return null;
+    return canvas.toDataURL('image/png');
 }
