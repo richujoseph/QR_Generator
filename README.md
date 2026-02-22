@@ -65,15 +65,15 @@ I learned that the practical way.
 
 ##  Features
 
-- ** Instant Generation:** Type a URL and watch the QR code appear instantly.
-- ** Customization:** Change foreground and background colors to match your brand.
-- ** Size Options:** From tiny (150px) to massive (400px), we've got you covered.
-- ** Error Correction:** Adjust the error correction level (L, M, Q, H) to ensure scannability even if part of the code is blocked.
-- ** Multiple Formats:** Download your QR code as a crisp `PNG` or scalable `SVG`.
-- ** Copy to Clipboard:** One-click copy the QR image directly to your clipboard.
-- ** History Panel:** Automatically saves your recently generated QR codes in your local storage so you don't lose track of them.
-- ** Fully Responsive:** Looks gorgeous on desktop, tablet, and mobile.
-- ** Dark Mode UI:** Because everything looks better with a sleek, glassmorphism dark theme.
+-  **Instant Generation:** Type a URL and watch the QR code appear instantly.
+-  **Customization:** Change foreground and background colors to match your brand.
+-  **Size Options:** From tiny (150px) to massive (400px), we've got you covered.
+-  **Error Correction:** Adjust the error correction level (L, M, Q, H) to ensure scannability even if part of the code is blocked.
+-  **Multiple Formats:** Download your QR code as a crisp `PNG` or scalable `SVG`.
+-  **Copy to Clipboard:** One-click copy the QR image directly to your clipboard.
+-  **History Panel:** Automatically saves your recently generated QR codes in your local storage so you don't lose track of them.
+-  **Fully Responsive:** Looks gorgeous on desktop, tablet, and mobile.
+-  **Dark Mode UI:** Because everything looks better with a sleek, glassmorphism dark theme.
 
 ##  Built With
 
@@ -86,53 +86,14 @@ I learned that the practical way.
 
 Since this is a client-side only application, getting started is incredibly simple!
 
-### Option 1: Live Demo
-*(Add your live hosting link here, e.g., Vercel, Netlify, or GitHub Pages)*
-[Live Demo](https://your-live-link.com)
-
-### Option 2: Run Locally
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/richujoseph/QR_Generator.git
-   ```
-2. Navigate to the project directory:
-   ```bash
-   cd QR_Generator
-   ```
-3. Open `index.html` in your favorite web browser! Alternatively, use a local server like Live Server (VS Code) or Python's `http.server`:
-   ```bash
-   python3 -m http.server 8080
-   ```
-   Then visit `http://localhost:8080` in your browser.
-
-##  File Structure
-
-The project has been refactored into a highly modular and maintainable structure:
-
-```
-QR_Generator/
-├── index.html                      # The main HTML structure
-├── css/                            # Styling files
-│   ├── variables.css               # Design tokens (colors, spacing, etc.)
-│   ├── reset.css                   # Browser normalization
-│   ├── layout.css                  # Base layout and background
-│   ├── responsive.css              # Media queries
-│   └── components/                 # Component-specific styles (buttons, card, etc.)
-└── js/                             # JavaScript modules
-    ├── app.js                      # Main orchestrator
-    ├── config.js                   # Application configuration & defaults
-    ├── validators.js               # URL validation logic
-    ├── qr-engine.js                # Wrapper for QRCode.js generation & downloads
-    ├── history.js                  # LocalStorage history management
-    ├── history-ui.js               # History DOM rendering
-    └── toast.js                    # Toast notification manager
-```
+###  Live Demo
+ **Try it here:** https://qrgenerator-v1.vercel.app
 
 ##  Contributing
 
 Contributions, issues, and feature requests are welcome!
 Feel free to check [issues page](https://github.com/richujoseph/QR_Generator/issues).
 
-## 📝 License
+##  License
 
 This project is [MIT](https://choosealicense.com/licenses/mit/) licensed.
