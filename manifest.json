@@ -1,0 +1,19 @@
+{
+    "name": "QR Code Generator",
+    "short_name": "QR Generator",
+    "description": "Generate, customize, and download QR codes for URLs, WiFi, Email, Phone, SMS, vCard and more. Free, private, no tracking.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#07071a",
+    "theme_color": "#07071a",
+    "orientation": "any",
+    "categories": ["utilities", "productivity"],
+    "icons": [
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='80' fill='%2307071a'/><text x='256' y='380' font-size='320' text-anchor='middle'>📱</text></svg>",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}

@@ -1,0 +1,489 @@
+/* ══════════════════════════════════════════════════
+   Extra Features — Templates, vCard, Logo, Diff,
+   Language Switcher, Branded Frame, Bulk Export
+   ══════════════════════════════════════════════════ */
+
+/* ── Templates Modal ────────────────────────────── */
+.templates-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-smooth);
+}
+
+.templates-overlay.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.templates-modal {
+    background: var(--bg-card);
+    border: var(--border-glass);
+    border-radius: var(--radius-xl);
+    padding: var(--space-2xl);
+    max-width: 520px;
+    width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    animation: scaleIn 0.3s ease both;
+}
+
+.templates-modal__title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin-bottom: var(--space-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.templates-modal__close {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: background var(--transition-fast);
+}
+
+.templates-modal__close:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.templates-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+}
+
+.template-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.template-card:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.template-card__icon {
+    font-size: 1.4rem;
+}
+
+.template-card__name {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+}
+
+.template-card__desc {
+    font-size: 0.62rem;
+    color: var(--text-muted);
+}
+
+/* ── Diff Checker Modal ─────────────────────────── */
+.diff-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-smooth);
+}
+
+.diff-overlay.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.diff-modal {
+    background: var(--bg-card);
+    border: var(--border-glass);
+    border-radius: var(--radius-xl);
+    padding: var(--space-2xl);
+    max-width: 600px;
+    width: 90vw;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    animation: scaleIn 0.3s ease both;
+}
+
+.diff-modal__title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin-bottom: var(--space-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.diff-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.diff-inputs .input {
+    width: 100%;
+}
+
+.diff-inputs label {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: var(--space-xs);
+}
+
+.diff-result {
+    text-align: center;
+    padding: var(--space-lg);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    display: none;
+}
+
+.diff-result.is-visible {
+    display: block;
+}
+
+.diff-result--match {
+    background: rgba(52, 211, 153, 0.1);
+    color: var(--success);
+    border: 1px solid rgba(52, 211, 153, 0.2);
+}
+
+.diff-result--mismatch {
+    background: rgba(248, 113, 113, 0.1);
+    color: var(--error);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+}
+
+.diff-qr-row {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    margin-top: var(--space-lg);
+}
+
+.diff-qr-box {
+    background: #fff;
+    border-radius: var(--radius-md);
+    padding: var(--space-sm);
+    text-align: center;
+}
+
+.diff-qr-box canvas {
+    max-width: 140px !important;
+    max-height: 140px !important;
+}
+
+/* ── vCard Fields ───────────────────────────────── */
+.vcard-fields {
+    display: none;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xl);
+    animation: fadeIn 0.25s ease both;
+}
+
+.vcard-fields.is-visible {
+    display: flex;
+}
+
+.vcard-row {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.vcard-row .input {
+    flex: 1;
+}
+
+/* ── Logo Upload ────────────────────────────────── */
+.logo-upload {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.logo-upload__label {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.logo-upload__row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.logo-upload__btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.logo-upload__btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--accent);
+    color: var(--text-primary);
+}
+
+.logo-upload__btn.has-logo {
+    border-style: solid;
+    border-color: var(--success);
+    color: var(--success);
+}
+
+.logo-upload__preview {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent);
+    display: none;
+}
+
+.logo-upload__preview.is-visible {
+    display: block;
+}
+
+.logo-upload__remove {
+    padding: 6px 10px;
+    border: none;
+    background: rgba(248, 113, 113, 0.12);
+    color: var(--error);
+    border-radius: var(--radius-sm);
+    font-size: 0.62rem;
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    display: none;
+    transition: background var(--transition-fast);
+}
+
+.logo-upload__remove.is-visible {
+    display: block;
+}
+
+.logo-upload__remove:hover {
+    background: rgba(248, 113, 113, 0.22);
+}
+
+/* ── Language Switcher ──────────────────────────── */
+.lang-switcher {
+    position: fixed;
+    top: var(--space-lg);
+    right: var(--space-lg);
+    z-index: var(--z-dropdown);
+}
+
+.lang-trigger {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    font-size: 0.68rem;
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.lang-trigger:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.lang-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    min-width: 150px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-4px);
+    transition: all var(--transition-smooth);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.lang-switcher.is-open .lang-dropdown {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.lang-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 14px;
+    border: none;
+    background: none;
+    color: var(--text-secondary);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    text-align: left;
+    transition: background var(--transition-fast);
+}
+
+.lang-option:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-primary);
+}
+
+.lang-option.is-active {
+    color: var(--accent-hover);
+    background: rgba(var(--accent-rgb), 0.08);
+}
+
+/* ── Branded Frame Modal ────────────────────────── */
+.frame-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-smooth);
+}
+
+.frame-overlay.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.frame-modal {
+    background: var(--bg-card);
+    border: var(--border-glass);
+    border-radius: var(--radius-xl);
+    padding: var(--space-2xl);
+    max-width: 420px;
+    width: 90vw;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    animation: scaleIn 0.3s ease both;
+}
+
+.frame-modal__title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin-bottom: var(--space-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.frame-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.frame-form .input {
+    width: 100%;
+}
+
+/* ── Extra Action Buttons (row 2) ───────────────── */
+.actions-extra {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: var(--space-sm);
+}
+
+.actions-extra .btn {
+    font-size: 0.62rem;
+    padding: 6px 12px;
+    gap: 4px;
+}
+
+.actions-extra .btn svg {
+    width: 12px;
+    height: 12px;
+}
+
+/* ── Responsive for modals ──────────────────────── */
+@media (max-width: 480px) {
+    .templates-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .diff-inputs {
+        grid-template-columns: 1fr;
+    }
+
+    .lang-switcher {
+        top: var(--space-sm);
+        right: var(--space-sm);
+    }
+
+    .vcard-row {
+        flex-direction: column;
+    }
+
+    .diff-qr-row {
+        flex-direction: column;
+        align-items: center;
+    }
+}

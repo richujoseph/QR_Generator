@@ -91,6 +91,14 @@ export function clearHistory() {
  * @param {number} ts
  * @returns {string}
  */
+/**
+ * Get all history entries (alias for loadHistory).
+ * @returns {HistoryEntry[]}
+ */
+export function getHistory() {
+    return loadHistory();
+}
+
 export function formatTimeAgo(ts) {
     const seconds = Math.floor((Date.now() - ts) / 1000);
     if (seconds < 60) return 'just now';

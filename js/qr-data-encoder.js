@@ -6,42 +6,32 @@
  */
 
 /**
- * @typedef {'url'|'text'|'wifi'|'email'|'phone'|'sms'} QRDataType
+ * @typedef {'url'|'text'|'wifi'|'email'|'phone'|'sms'|'vcard'} QRDataType
  */
 
 /**
  * All supported QR data types with labels and icons.
  */
 export const QR_TYPES = [
-    { id: 'url', label: 'URL', icon: '🔗', placeholder: 'https://example.com' },
-    { id: 'text', label: 'Text', icon: '📝', placeholder: 'Enter any text message...' },
-    { id: 'wifi', label: 'WiFi', icon: '📶', placeholder: '' },
-    { id: 'email', label: 'Email', icon: '✉️', placeholder: 'hello@example.com' },
-    { id: 'phone', label: 'Phone', icon: '📞', placeholder: '+1 234 567 8900' },
-    { id: 'sms', label: 'SMS', icon: '💬', placeholder: '+1 234 567 8900' },
+    { id: 'url', label: 'URL', placeholder: 'https://example.com' },
+    { id: 'text', label: 'Text', placeholder: 'Enter any text message...' },
+    { id: 'wifi', label: 'WiFi', placeholder: '' },
+    { id: 'email', label: 'Email', placeholder: 'hello@example.com' },
+    { id: 'phone', label: 'Phone', placeholder: '+1 234 567 8900' },
+    { id: 'sms', label: 'SMS', placeholder: '+1 234 567 8900' },
+    { id: 'vcard', label: 'vCard', placeholder: '' },
 ];
 
 /**
  * Encode WiFi credentials into a QR-compatible string.
- * @param {Object} opts
- * @param {string} opts.ssid - Network name
- * @param {string} opts.password - Network password
- * @param {string} [opts.encryption='WPA'] - WPA, WEP, or nopass
- * @param {boolean} [opts.hidden=false]
- * @returns {string}
  */
 export function encodeWifi({ ssid, password, encryption = 'WPA', hidden = false }) {
-    const esc = (s) => s.replace(/[\\;,:""]/g, '\\$&');
+    const esc = (s) => s.replace(/[\\;,:"]/g, '\\$&');
     return `WIFI:T:${encryption};S:${esc(ssid)};P:${esc(password)};H:${hidden ? 'true' : 'false'};;`;
 }
 
 /**
  * Encode an email into a mailto: QR string.
- * @param {Object} opts
- * @param {string} opts.address
- * @param {string} [opts.subject='']
- * @param {string} [opts.body='']
- * @returns {string}
  */
 export function encodeEmail({ address, subject = '', body = '' }) {
     const params = [];
@@ -53,8 +43,6 @@ export function encodeEmail({ address, subject = '', body = '' }) {
 
 /**
  * Encode a phone number for QR.
- * @param {string} phone
- * @returns {string}
  */
 export function encodePhone(phone) {
     return `tel:${phone.replace(/\s/g, '')}`;
@@ -62,14 +50,33 @@ export function encodePhone(phone) {
 
 /**
  * Encode an SMS for QR.
- * @param {Object} opts
- * @param {string} opts.phone
- * @param {string} [opts.message='']
- * @returns {string}
  */
 export function encodeSMS({ phone, message = '' }) {
     const num = phone.replace(/\s/g, '');
     return message ? `smsto:${num}:${message}` : `smsto:${num}`;
+}
+
+/**
+ * Encode a vCard (contact card) for QR.
+ */
+export function encodeVCard({ firstName = '', lastName = '', phone = '', email = '', company = '', title = '', website = '' }) {
+    const lines = [
+        'BEGIN:VCARD',
+        'VERSION:3.0',
+    ];
+    const fn = [firstName, lastName].filter(Boolean).join(' ');
+    if (fn) lines.push(`FN:${fn}`);
+    if (lastName || firstName) lines.push(`N:${lastName};${firstName};;;`);
+    if (company) lines.push(`ORG:${company}`);
+    if (title) lines.push(`TITLE:${title}`);
+    if (phone) lines.push(`TEL;TYPE=CELL:${phone.replace(/\s/g, '')}`);
+    if (email) lines.push(`EMAIL:${email}`);
+    if (website) {
+        const url = /^https?:\/\//i.test(website) ? website : `https://${website}`;
+        lines.push(`URL:${url}`);
+    }
+    lines.push('END:VCARD');
+    return lines.join('\n');
 }
 
 /**
@@ -85,7 +92,6 @@ export function encodeData(type, data) {
                 let url = (data.value || '').trim();
                 if (!url) return { valid: false, error: 'Please enter a URL' };
                 if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-                // Validate with URL constructor
                 try { new URL(url); } catch { return { valid: false, error: 'Please enter a valid URL' }; }
                 return { valid: true, encoded: url };
             }
@@ -114,6 +120,12 @@ export function encodeData(type, data) {
                 const phone = (data.phone || data.value || '').trim();
                 if (!phone) return { valid: false, error: 'Please enter a phone number' };
                 return { valid: true, encoded: encodeSMS({ phone, message: data.message }) };
+            }
+            case 'vcard': {
+                if (!data.firstName?.trim() && !data.lastName?.trim()) {
+                    return { valid: false, error: 'Please enter a name' };
+                }
+                return { valid: true, encoded: encodeVCard(data) };
             }
             default:
                 return { valid: false, error: 'Unknown QR type' };
