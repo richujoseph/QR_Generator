@@ -94,6 +94,3 @@ Since this is a client-side only application, getting started is incredibly simp
 Contributions, issues, and feature requests are welcome!
 Feel free to check [issues page](https://github.com/richujoseph/QR_Generator/issues).
 
-##  License
-
-This project is [MIT](https://choosealicense.com/licenses/mit/) licensed.
